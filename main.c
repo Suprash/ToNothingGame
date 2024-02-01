@@ -4,22 +4,18 @@
 
 
 #define instring_limit 10
-
 char string_input[instring_limit];
+char commandbase[9][10] = {"login","start","stop","buy","status","logout","","",""};
 
 int validityCheck(char* ptr_command)//returns 1 if it is invalid 
 {
-    if (!strcmp(ptr_command,"area"))//strcmp returns 0 if the two strings are equal
+    if (!strcmp(ptr_command,commandbase[0]))//strcmp returns 0 if the two strings are equal
     {
         return 0;
     }
     return 1;
 }
 //switch 
-
-
-
-static char* commandbase[3][3] = [["login","start","stop"],["buy","status","logout"],[]];
 
 char* user_input()
 {
@@ -29,7 +25,7 @@ char* user_input()
             printf("Command out of my understanding\n");
             user_input();
         }
-    return string_input;     
+    return string_input;  //return the value    
 }
 
 int main()
