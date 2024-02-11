@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdlib.h>
+#include <Windows.h>
 
 #define instring_limit 10
 #define totalCommands 6
+#define mainfile "main.exe"
+
 //int numberofuser = 0;
+float total_storage = 50;//stores the total point of the player
+fpos_t* pos_aft_name;
 char string_input[instring_limit];
 char commandbase[9][10] = {"login","start","stop","buy","status","logout","","",""};
 int login();
@@ -13,7 +19,7 @@ void stop();
 void buy();
 void status();
 void logout();
-
+int start_flag = 0;
 float multiplier=0.2;
 
 time_t timer_b;//timer_before 1970 jan 1
@@ -22,23 +28,56 @@ time_t timer_a;//timer_after
 void start()
 {
     timer_b = time(NULL);
-    printf("Your begining code is: %ld\n",timer_b);
+    system("color b");
+    printf("We have started mining: %ld\n",timer_b);
+    start_flag = 1;
+    Sleep(2000);
+    system("cls");
 }
 
 void stop()
 {
-    timer_a = time(NULL);
-    float diff = difftime(timer_a,timer_b);
-    printf("You mined %0.1f points in that time.\n",multiplier*diff);
-    FILE* timelog;
-    timelog = fopen("userlog.txt","a");
-    fseek(timelog,0,SEEK_END);
-    fprintf(timelog,"\n%0.2f",(multiplier*diff));
-    fclose(timelog);
+    if (start_flag == 1)
+    {
+        timer_a = time(NULL);
+        float diff = difftime(timer_a,timer_b);
+        total_storage += multiplier * diff;
+        printf("You mined %0.2f points in that time.\n",multiplier*diff);
+        printf("Total score = %0.2f \n",total_storage);
+        FILE* timelog;
+        timelog = fopen("userlog.txt","a");
+        fseek(timelog,0, SEEK_END);
+        fprintf(timelog,"\n%0.2f",(multiplier*diff));
+        fclose(timelog);
+        start_flag = 0;
+        system("color 4"); 
+        Sleep(2500);
+        system("cls");
+        if (total_storage <= 40 && total_storage >=10)
+        {
+            printf("You have been promoted to a Lord \n");
+        }
+        if (total_storage <= 90 && total_storage > 40)
+        {
+            printf("You have been promoted to Crown Prince \n");
+        }     
+        if (total_storage <=100 && total_storage > 90)
+        { 
+            printf("You have been promoted to King\n");
+        }
+    }
+    else
+    {
+        printf("Guess you have forgotten to start mining sire\n");
+        Sleep(3000);
+        system("cls");
+    }
+
 } 
 
 void status()
 {
+    system("color 0");
     char buf[15];
     FILE* reading;
         reading = fopen("userlog.txt","r"); 
@@ -47,6 +86,7 @@ void status()
         printf("user: %s \n",buf);
         fseek(reading,0,SEEK_CUR);
         fgets(buf,15,reading);
+        total_storage = (int)buf;
         printf("score: %s\n",buf);
         fclose(reading);
 }
@@ -63,25 +103,42 @@ int login()
         scanf("%s",username);
         printf("Oh Master %s, we finally have come across you\n Welcome to the game\n\n");
         ////////////////////////////////////////////////////////////////////////////////////////
-        userlog = fopen("userlog.txt","w");//pointer is at last character of the file
+       userlog = fopen("userlog.txt","w");//pointer is at last character of the file
         
         if (userlog == NULL)//if can't open returns NULL
         {
             printf("File couldn't be opened, Try again");
-            return 0;
+            system(mainfile);
         }
         fprintf(userlog,"%s",username);
+        fgetpos(userlog,pos_aft_name);
         fclose(userlog);
+        Sleep(3000);
+        system("cls");
+        
     }
     else
     {
         char buf[20];
         FILE* reading;
-        reading = fopen("userlog.txt","r"); 
-        fseek(reading,0,SEEK_SET);
-        fgets(buf,15,reading);
-        printf("You are already logged in you must be %s sama, we are grateful that you have returned.\n", buf);
-        fclose(reading);
+        if (reading = fopen("userlog.txt","r")) 
+        {   
+            fseek(reading,0,SEEK_SET);
+            fgets(buf,15,reading);
+            printf("You are already logged in you must be %s sama, we are grateful that you have returned.\n", buf);
+            fclose(reading);
+            Sleep(2000);
+            system("cls");
+        }
+        else
+        {
+            //if file not found you are sent to the begining of the whole program
+            system("cls");
+            printf("File not found you must be a new user. Wait a sec.");
+            Sleep(3000);
+            system("cls");
+            system(mainfile);
+        }
     }
     return 0;
 }
