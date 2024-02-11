@@ -4,7 +4,7 @@
 
 #define instring_limit 10
 #define totalCommands 6
-int numberofuser = 0;
+//int numberofuser = 0;
 char string_input[instring_limit];
 char commandbase[9][10] = {"login","start","stop","buy","status","logout","","",""};
 int login();
@@ -16,7 +16,7 @@ void logout();
 
 float multiplier=0.2;
 
-time_t timer_b;//timer_before
+time_t timer_b;//timer_before 1970 jan 1
 time_t timer_a;//timer_after
 
 void start()
