@@ -1,4 +1,4 @@
-#DoNothingGame
+# DoNothingGame
 
 This is a game written in C that anyone can keep running in the back of the game.
 This game has two modes to play:
